@@ -44,7 +44,7 @@ TMUX_BIN="tmux.${OS}-${ARCH}"
 ######################################
 TMUX_VERSION=3.2a
 MUSL_VERSION=1.2.2
-NCURSES_VERSION=6.2
+NCURSES_VERSION=6.3
 LIBEVENT_VERSION=2.1.12
 UPX_VERSION=3.96
 ######################################
@@ -63,7 +63,7 @@ MUSL_ARCHIVE="musl-${MUSL_VERSION}.tar.gz"
 MUSL_URL="https://www.musl-libc.org/releases"
 
 NCURSES_ARCHIVE="ncurses.tar.gz"
-NCURSES_URL="https://invisible-island.net/datafiles/release"
+NCURSES_URL="https://ftp.gnu.org/pub/gnu/ncurses/ncurses-${NCURSES_VERSION}.tar.gz"
 
 LIBEVENT_ARCHIVE="libevent-${LIBEVENT_VERSION}-stable.tar.gz"
 LIBEVENT_URL="https://github.com/libevent/libevent/releases/download/release-${LIBEVENT_VERSION}-stable"
@@ -316,7 +316,7 @@ LOG_FILE="ncurses-${NCURSES_VERSION}.log"
 cd ${TMUX_STATIC_HOME}/src || exit 1
 if [ ! -f ${NCURSES_ARCHIVE} ]; then
     printf "Downloading..."
-    wget --no-verbose ${NCURSES_URL}/${NCURSES_ARCHIVE} > ${LOG_DIR}/${LOG_FILE} 2>&1
+    wget --no-verbose -O ${NCURSES_ARCHIVE} ${NCURSES_URL} > ${LOG_DIR}/${LOG_FILE} 2>&1
     checkResult $?
 fi
 
