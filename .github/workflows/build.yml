@@ -13,22 +13,22 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-18.04
-
+    runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
-      # Do the build step
-      - name: run the buildscript
-        run: /bin/sh build-static-tmux.sh
+      - uses: actions/checkout@v3
+      - name: prepare
+        run: docker run --privileged --rm tonistiigi/binfmt --install all
+      - name: build for linux/amd64
+        run: docker buildx build --platform linux/amd64 -f Dockerfile -o build .
+      - name: build for linux/arm64
+        run: docker buildx build --platform linux/arm64 -f Dockerfile -o build .
       # Do the upload step
       - name: Upload artifacts
         uses: ncipollo/release-action@v1.8.4
         with:
-          artifacts: "/tmp/tmux-static/bin/tmux.*.gz"
+          artifacts: "./build/tmux.*.gz"
           replacesArtifacts: true
           allowUpdates: true
           bodyFile: "README.md"
