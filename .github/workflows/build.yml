@@ -21,6 +21,7 @@ jobs:
       with:
         name: tmux-x86_64
         path: tmux
+        retention-days: 5
   build-linux-aarch64:
     runs-on: ubuntu-latest
     steps:
@@ -35,3 +36,4 @@ jobs:
       with:
         name: tmux-aarch64
         path: tmux
+        retention-days: 5
