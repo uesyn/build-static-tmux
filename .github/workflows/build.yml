@@ -1,35 +1,37 @@
-# This is a basic workflow to help you get started with Actions
 name: Build artifact
 
-# Controls when the action will run. 
 on:
   release:
     types: [published]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
+  build-linux-x86_64:
     runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-      - name: prepare
-        run: docker run --privileged --rm tonistiigi/binfmt --install all
-      - name: build for linux/amd64
-        run: docker buildx build --platform linux/amd64 -f Dockerfile -o build .
-      - name: build for linux/arm64
-        run: docker buildx build --platform linux/arm64 -f Dockerfile -o build .
-      # Do the upload step
-      - name: Upload artifacts
-        uses: ncipollo/release-action@v1.8.4
-        with:
-          artifacts: "./build/tmux.*.gz"
-          replacesArtifacts: true
-          allowUpdates: true
-          bodyFile: "README.md"
-          token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Build
+      run: |
+        docker build --build-arg=HOST=x86_64 -t builder .
+        docker run --rm -w $PWD -v $PWD:$PWD builder cp /usr/local/bin/tmux .
+    - name: Archive the build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: tmux-x86_64
+        path: tmux
+  build-linux-aarch64:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Build
+      run: |
+        docker build --build-arg=HOST=aarch64 -t builder .
+        docker run --rm -w $PWD -v $PWD:$PWD builder cp /usr/local/bin/tmux .
+    - name: Archive the build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: tmux-aarch64
+        path: tmux
