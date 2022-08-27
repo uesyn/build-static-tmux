@@ -1,9 +1,7 @@
 name: Build artifact
 
 on:
-  release:
-    types: [published]
-
+  push:
   workflow_dispatch:
 
 jobs:
@@ -16,11 +14,12 @@ jobs:
       run: |
         docker build --build-arg=HOST=x86_64 -t builder .
         docker run --rm -w $PWD -v $PWD:$PWD builder cp /usr/local/bin/tmux .
+        mv tmux tmux-linux-x86_64
     - name: Archive the build artifact
       uses: actions/upload-artifact@v3
       with:
-        name: tmux-x86_64
-        path: tmux
+        name: tmux-linux-x86_64
+        path: tmux-linux-x86_64
         retention-days: 5
   build-linux-aarch64:
     runs-on: ubuntu-latest
@@ -31,9 +30,49 @@ jobs:
       run: |
         docker build --build-arg=HOST=aarch64 -t builder .
         docker run --rm -w $PWD -v $PWD:$PWD builder cp /usr/local/bin/tmux .
+        mv tmux tmux-linux-aarch64
     - name: Archive the build artifact
       uses: actions/upload-artifact@v3
       with:
-        name: tmux-aarch64
-        path: tmux
+        name: tmux-linux-aarch64
+        path: tmux-linux-aarch64
         retention-days: 5
+  build-darwin:
+    runs-on: macos-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Build
+      run: |
+        ./build-for-mac.sh
+        mv tmux/tmux tmux-darwin
+    - name: Archive the build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: tmux-darwin
+        path: tmux-darwin
+        retention-days: 5
+  release:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: ["build-darwin", "build-linux-aarch64", "build-linux-x86_64"]
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: tmux-darwin
+        path: tmux-darwin
+    - uses: actions/download-artifact@v3
+      with:
+        name: tmux-linux-aarch64
+        path: tmux-linux-aarch64
+    - uses: actions/download-artifact@v3
+      with:
+        name: tmux-linux-x86_64
+        path: tmux-linux-x86_64
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          tmux-linux-x86_64/tmux-linux-x86_64
+          tmux-linux-aarch64/tmux-linux-aarch64
+          tmux-darwin/tmux-darwin
