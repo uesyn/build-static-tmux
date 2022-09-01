@@ -42,8 +42,6 @@ curl -sSLf -o - https://github.com/tmux/tmux/releases/download/${TMUX_VERSION}/t
   LIBEVENT_LIBS="-L${SCRIPT_ROOT}/opt/lib -levent" \
   LIBEVENT_CFLAGS="-I${SCRIPT_ROOT}/opt/include" \
   LIBNCURSES_CFLAGS="-I${SCRIPT_ROOT}/opt/include" \
-  LIBNCURSES_LIBS="-L${SCRIPT_ROOT}/opt/lib -lncurses" \
-  LIBTINFO_CFLAGS="-I${SCRIPT_ROOT}/opt/include/ncurses" \
-  LIBTINFO_LIBS="-L${SCRIPT_ROOT}/opt/lib -ltinfo"
+  LIBNCURSES_LIBS="-L${SCRIPT_ROOT}/opt/lib -lncurses"
 make
 cd ..
