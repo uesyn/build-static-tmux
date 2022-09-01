@@ -35,8 +35,7 @@ rm -rf tmux
 mkdir -p tmux
 cd tmux
 curl -sSLf -o - https://github.com/tmux/tmux/releases/download/${TMUX_VERSION}/tmux-${TMUX_VERSION}.tar.gz | tar xzf - --strip-component=1
-#./configure --prefix=${BREW_PREFIX} --disable-utf8proc \
-./configure --prefix=${SCRIPT_ROOT} --disable-utf8proc \
+./configure --prefix=${BREW_PREFIX} --disable-utf8proc \
   CFLAGS="-I${SCRIPT_ROOT}/opt/include -arch arm64 -arch x86_64" \
   LDFLAGS="-L${SCRIPT_ROOT}/opt/lib" \
   CPPFLAGS="-I${SCRIPT_ROOT}/opt/include" \
@@ -45,6 +44,6 @@ curl -sSLf -o - https://github.com/tmux/tmux/releases/download/${TMUX_VERSION}/t
   LIBNCURSES_CFLAGS="-I${SCRIPT_ROOT}/opt/include" \
   LIBNCURSES_LIBS="-L${SCRIPT_ROOT}/opt/lib -lncurses" \
   LIBTINFO_CFLAGS="-I${SCRIPT_ROOT}/opt/include/ncurses" \
-  LIBTINFO_LIBS="-L${SCRIPT_ROOT}/opt/lib -ltinfo" --enable-static
+  LIBTINFO_LIBS="-L${SCRIPT_ROOT}/opt/lib -ltinfo"
 make
 cd ..
