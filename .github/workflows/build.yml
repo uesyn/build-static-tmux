@@ -38,30 +38,11 @@ jobs:
         name: tmux-linux-aarch64
         path: tmux-linux-aarch64
         retention-days: 5
-  build-darwin:
-    runs-on: macos-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Build
-      run: |
-        ./build-for-mac.sh
-        mv tmux/tmux tmux-darwin
-    - name: Archive the build artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: tmux-darwin
-        path: tmux-darwin
-        retention-days: 5
   release:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-    needs: ["build-darwin", "build-linux-aarch64", "build-linux-x86_64"]
+    needs: ["build-linux-aarch64", "build-linux-x86_64"]
     steps:
-    - uses: actions/download-artifact@v3
-      with:
-        name: tmux-darwin
-        path: tmux-darwin
     - uses: actions/download-artifact@v3
       with:
         name: tmux-linux-aarch64
@@ -76,4 +57,3 @@ jobs:
         files: |
           tmux-linux-x86_64/tmux-linux-x86_64
           tmux-linux-aarch64/tmux-linux-aarch64
-          tmux-darwin/tmux-darwin
