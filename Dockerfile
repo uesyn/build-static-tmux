@@ -4,6 +4,7 @@ RUN apk add curl bash git alpine-sdk libevent-static ncurses-static autoconf aut
 RUN curl -L -o tmux.tar.gz https://github.com/tmux/tmux/releases/download/${TMUX_VERSION}/tmux-${TMUX_VERSION}.tar.gz
 RUN tar xzvf tmux.tar.gz && \
     cd tmux-${TMUX_VERSION} && \
+    curl -sSfL https://raw.githubusercontent.com/z80oolong/tmux-eaw-fix/master/tmux-${TMUX_VERSION}-fix.diff | patch -u && \
     ./configure --enable-static && \
     make && \
     make install
